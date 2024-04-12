@@ -1,6 +1,7 @@
 # Introduction to Containers with Docker, Kubernetes &amp; OpenShift
 > From IBM on Coursera
-## Peer-graded Assignment: Build and Deploy a Simple Guestbook 
+## Peer-graded Assignment: Build and Deploy a Simple Guestbook
+Results available under [screenshots/assignment](https://github.com/j5py/containers/tree/main/screenshots/assignment) (file names imposed by the instructions)
 ### Build the Guestbook app
 Clone the git repository that contains the artifacts needed for this lab
 ```Shell
@@ -10,7 +11,7 @@ Change to the directory for this lab
 ```Shell
 cd guestbook/v1/guestbook
 ```
-Complete the Dockerfile with the necessary Docker commands to build and push your image
+Complete the Dockerfile ( [multi-stage builds](https://docs.docker.com/build/building/multi-stage/) ) with the necessary commands to build and push your image
 - The FROM instruction initializes a new build stage and specifies the base image that subsequent instructions will build upon
 - The COPY command enables us to copy files to our image
 - The ADD command is used to copy files/directories into a Docker image
