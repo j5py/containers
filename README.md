@@ -1,2 +1,2 @@
-# containers
-Introduction to Containers w/ Docker, Kubernetes &amp; OpenShift (from IBM on Coursera).
+# Introduction to Containers with Docker, Kubernetes &amp; OpenShift
+> From IBM on Coursera
