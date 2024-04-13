@@ -94,3 +94,87 @@ To undo the Deploymnent
 ```Shell
 kubectl rollout undo deployment/guestbook --to-revision=1 && kubectl get rs
 ```
+## Optional: Deploy Guestbook App from the OpenShift Internal Registry
+Results available under [screenshots/optional](https://github.com/j5py/containers/tree/main/screenshots/optional)
+### Deploy
+Create an ImageStream that points to your image in IBM Cloud Container Registry
+```Shell
+oc tag us.icr.io/$MY_NAMESPACE/guestbook:v1 guestbook:v1 --reference-policy=local --scheduled
+```
+1. Click on **Open OpenShift Console** under **Skills Network Toolbox**
+2. From **Developer** click **Add**, then  **Container image**
+3. Switch to **Image stream tag from internal registry**, then select your project
+4. Keep all the default values and hit **Create**
+5. From **Topology** click the `guestbook` Deployment, this should take you to the **Resources**
+    - Do not delete the `opensh.console` Deployment in **Topology** as this is essential for the OpenShift Console to function properly
+### Update
+Let’s update the Guestbook app and see how OpenShift’s image streams can help us update our apps with ease
+```Shell
+docker build . -t us.icr.io/$MY_NAMESPACE/guestbook:v1 && docker push us.icr.io/$MY_NAMESPACE/guestbook:v1
+```
+```Shell
+oc import-image guestbook:v1 --from=us.icr.io/$MY_NAMESPACE/guestbook:v1 --confirm
+```
+Switch to **Administrator** > **Builds** > **ImageStreams** > `guestbook` > **History**
+> View the guestbook in the browser again, OpenShift imported the new version of our image, and since the Deployment points to the image stream, it began running this new version as well
+### Storage
+**Topology** > `guestbook-app` > **Actions** > **Delete application**
+```Shell
+cd ../../v2
+```
+To familiarize yourself with the Deployment configuration for the Redis master
+> Redis is an open source, in-memory data structure store, used as a database, cache and message broker
+```Shell
+cat redis-master-deployment.yaml
+```
+Create the Redis master Deployment
+```Shell
+oc apply -f redis-master-deployment.yaml && oc get deployments
+```
+List Pods to see the Pod created by the Deployment.
+```Shell
+oc get pods
+```
+to familiarize yourself with the Service configuration for the Redis master
+```Shell
+cat redis-master-service.yaml
+```
+Create the Redis master Service
+```Shell
+oc apply -f redis-master-service.yaml
+```
+**Developer** > **Topology** > `redis-master` > **resources**
+
+To familiarize yourself with the Deployment configuration for the Redis slave
+```Shell
+cat redis-slave-deployment.yaml
+```
+Create the Redis slave Deployment
+```Shell
+oc apply -f redis-slave-deployment.yaml && oc get deployments
+```
+List Pods to see the Pod created by the Deployment
+```Shell
+oc get pods
+```
+To familiarize yourself with the Service configuration for the Redis slave
+```Shell
+cat redis-slave-service.yaml
+```
+Create the Redis slave Service
+```Shell
+oc apply -f redis-slave-service.yaml
+```
+**Developer** > **Topology** > `redis-slave` > **resources**
+
+Now it’s time to deploy the second version of the Guestbook app, which will leverage Redis for persistent storage
+1. From **Developer** click **Add**, then **Import from Git**
+    - `https://github.com/ibm-developer-skills-network/guestbook`
+2. **Show advanced Git options**
+    - **Context dir** > `/v2/guestbook`
+    - **Target port** > `3000`
+
+**Developer** > **Topology** > `guestbook` > **Routes**
+```Shell
+oc status
+```
